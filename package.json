@@ -1,0 +1,39 @@
+{
+  "name": "threejs-boilerplate",
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A minimal boilerplate for Three.js projects with Vite.js and modern best practices.",
+  "main": "src/main.js",
+  "keywords": [
+    "threejs",
+    "boilerplate",
+    "vite",
+    "webgl",
+    "tweakpane"
+  ],
+  "author": "Houmahani Kane <houmahanikane@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "sass": "^1.81.0",
+    "vite": "^5.4.11",
+    "vite-plugin-glsl": "^1.3.0"
+  },
+  "dependencies": {
+    "three": "^0.170.0",
+    "tweakpane": "^4.0.5"
+  }
+}
