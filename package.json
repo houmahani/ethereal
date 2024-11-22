@@ -1,13 +1,11 @@
 {
-  "name": "threejs-boilerplate",
+  "name": "ethereal",
   "private": false,
   "version": "1.0.0",
   "type": "module",
-  "description": "A minimal boilerplate for Three.js projects with Vite.js and modern best practices.",
   "main": "src/main.js",
   "keywords": [
     "threejs",
-    "boilerplate",
     "vite",
     "webgl",
     "tweakpane"

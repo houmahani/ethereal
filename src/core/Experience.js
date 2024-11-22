@@ -4,7 +4,7 @@ import Camera from '@/core/Camera.js'
 import Renderer from '@/core/Renderer.js'
 import Sizes from '@/core/Sizes.js'
 import Time from '@/core/Time.js'
-import Cube from '@/scene/Cube.js'
+import Plane from '@/scene/Plane.js'
 import { Pane } from 'tweakpane'
 
 export default class Experience extends Singleton {
@@ -28,7 +28,7 @@ export default class Experience extends Singleton {
     this.tweakpane = new Pane()
 
     // Add obects to the scene
-    this.cube = new Cube()
+    this.plane = new Plane()
 
     // Handle resizeing
     this.sizes.on(() => this.resize())
@@ -52,6 +52,6 @@ export default class Experience extends Singleton {
   update() {
     this.renderer.render()
 
-    this.cube.update()
+    this.plane.update()
   }
 }
