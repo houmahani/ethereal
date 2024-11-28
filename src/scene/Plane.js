@@ -8,10 +8,11 @@ export default class Plane {
     const experience = Experience.getInstance()
     this.scene = experience.scene
     this.sizes = experience.sizes
+    this.time = experience.time
     this.tweakpane = experience.tweakpane
 
     this.debugParams = null
-    // this.debug()
+    this.debug()
 
     this.loadTexture()
     this.createPlane()
@@ -23,13 +24,13 @@ export default class Plane {
 
     window.addEventListener('pointermove', (event) => {
       this.userMousePosition.clientX = event.clientX / this.sizes.width
-      this.userMousePosition.clientY = event.clientY / this.sizes.height
+      this.userMousePosition.clientY = 1 - event.clientY / this.sizes.height
     })
   }
 
   loadTexture() {
     this.loader = new THREE.TextureLoader()
-    this.texture = this.loader.load('/textures/notre-dame-de-paris.jpg')
+    this.texture = this.loader.load('/textures/horse.jpg')
     this.texture.wrapS = THREE.RepeatWrapping
     this.texture.wrapT = THREE.RepeatWrapping
   }
@@ -41,8 +42,21 @@ export default class Plane {
       fragmentShader: planeFragmentShader,
       uniforms: {
         uTexture: new THREE.Uniform(this.texture),
+        uTime: new THREE.Uniform(0),
+        uChromaticIntensity: new THREE.Uniform(0.8),
+        uRedOffset: new THREE.Uniform(0.01),
+        uGreenOffset: new THREE.Uniform(0.03),
+        uBlueOffset: new THREE.Uniform(0.04),
+        uDistortionAmplitude: new THREE.Uniform(0.09),
+        uDistortionFrequency: new THREE.Uniform(1.7),
         uUserMousePositionX: new THREE.Uniform(0),
         uUserMousePositionY: new THREE.Uniform(0),
+        uMaskDistortionOuterRadius: new THREE.Uniform(0.3),
+        uMaskDistortionInnerRadius: new THREE.Uniform(0.21),
+        uMaskChromaticOuterRadius: new THREE.Uniform(0.4),
+        uMaskChromaticInnerRadius: new THREE.Uniform(0.31),
+        uNoiseScaleX: new THREE.Uniform(0.5),
+        uNoiseScaleY: new THREE.Uniform(0.1),
       },
     })
 
@@ -51,24 +65,157 @@ export default class Plane {
   }
 
   debug() {
-    this.debugParams = {
-      rotationSpeed: 0.01,
-      cubeColor: '#00ff00',
-    }
-
-    this.tweakpane.addBinding(this.debugParams, 'rotationSpeed', {
-      min: 0,
-      max: 0.1,
-    })
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uChromaticIntensity',
+        min: 0,
+        max: 1,
+        value: 0.8,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uChromaticIntensity.value = event.value
+      })
 
     this.tweakpane
-      .addBinding(this.debugParams, 'cubeColor')
-      .on('change', (ev) => {
-        this.mesh.material.color.set(ev.value)
+      .addBlade({
+        view: 'slider',
+        label: 'uRedOffset',
+        min: 0,
+        max: 0.05,
+        value: 0.01,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uRedOffset.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uGreenOffset',
+        min: 0,
+        max: 0.05,
+        value: 0.03,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uGreenOffset.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uBlueOffset',
+        min: 0,
+        max: 0.05,
+        value: 0.04,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uBlueOffset.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uDistortionAmplitude',
+        min: 0,
+        max: 0.5,
+        value: 0.09,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uDistortionAmplitude.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uDistortionFrequency',
+        min: 1,
+        max: 10,
+        value: 6.0,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uDistortionFrequency.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uMaskDistortionInnerRadius',
+        min: 0,
+        max: 1.0,
+        value: 0.21,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uMaskDistortionInnerRadius.value =
+          event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uMaskDistortionOuterRadius',
+        min: 0,
+        max: 1.0,
+        value: 0.3,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uMaskDistortionOuterRadius.value =
+          event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uMaskChromaticInnerRadius',
+        min: 0,
+        max: 1.0,
+        value: 0.31,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uMaskChromaticInnerRadius.value =
+          event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uMaskChromaticOuterRadius',
+        min: 0,
+        max: 1.0,
+        value: 0.4,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uMaskChromaticOuterRadius.value =
+          event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uNoiseScaleX',
+        min: 0.0,
+        max: 2.0,
+        step: 0.01,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uNoiseScaleX.value = event.value
+      })
+
+    this.tweakpane
+      .addBlade({
+        view: 'slider',
+        label: 'uNoiseScaleY',
+        min: 0.0,
+        max: 2.0,
+        step: 0.01,
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uNoiseScaleY.value = event.value
       })
   }
 
   update() {
+    this.mesh.material.uniforms.uTime.value = this.time.elapsed * 0.0001
     this.mesh.material.uniforms.uUserMousePositionX.value =
       this.userMousePosition.clientX
     this.mesh.material.uniforms.uUserMousePositionY.value =
