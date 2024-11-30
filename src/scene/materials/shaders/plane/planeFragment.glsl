@@ -58,6 +58,7 @@ void main() {
   // Apply noise to distort the UVs
   float noiseValue = snoise(noiseInput);
 
+
   // Use the noise to offset UVs in a smooth, irregular way
   vec2 distortedUvNoise = vec2(
       vUv.x + noiseValue * uNoiseScaleX, 
@@ -67,10 +68,10 @@ void main() {
   // Calculate the distance from the distorted mouse position
   vec2 distortedMousePosition = vec2(
       uUserMousePositionX + snoise(vec2(uUserMousePositionX, uTime * 0.02)) * 0.05,
-      uUserMousePositionY + snoise(vec2(uUserMousePositionY, uTime * 0.02)) * 0.05
+      uUserMousePositionY + sin(vec2(uUserMousePositionY, uTime * 0.02)) * 0.05
   );
 
-float distance = length(distortedUvNoise - distortedMousePosition);
+  float distance = length(distortedUvNoise - distortedMousePosition);
 
   float smoothingDistortion = 1.0 - smoothstep(uMaskDistortionInnerRadius, uMaskDistortionOuterRadius, distance);
   float smoothingChromatic = 1.0 - smoothstep(uMaskChromaticInnerRadius, uMaskChromaticOuterRadius, distance);
@@ -83,6 +84,7 @@ float distance = length(distortedUvNoise - distortedMousePosition);
   // Chromatic effect with distortion
   vec4 originalImage = texture2D(uTexture, vUv);
   vec4 distortedImage = texture2D(uTexture, distortedUv);
+  vec4 blurredImage = texture2D(uTexture, distortedUv + vec2(0.01, 0.01));  // Apply a small offset for blur effect
 
   // Calculate chromatic offsets for each channel
   float redChannel = smoothingChromatic * texture2D(uTexture, distortedUv + vec2(uRedOffset, 0.0)).r;
@@ -99,9 +101,34 @@ float distance = length(distortedUvNoise - distortedMousePosition);
   distortedImage.g = clamp(distortedImage.g, 0.0, 1.0);
   distortedImage.b = clamp(distortedImage.b, 0.0, 1.0);
 
-  // Blend final color with the original image based on smoothing
-  vec4 finalColor = mix(originalImage, distortedImage, smoothingDistortion);
-  // vec4 finalColor = vec4(distance, distance, distance, 1.0);
-  gl_FragColor = finalColor;
 
+
+// Step 1: Apply shimmer only on the chromatic distorted image
+vec2 shimmerMovement = vec2(uTime * 0.1, uTime * 0.1);  // Adjust shimmer movement speed
+vec2 shimmerInput = distortedUv + shimmerMovement; // Movement for shimmer effect
+
+// Step 2: Create finer noise for shimmer particles
+vec2 shimmerNoiseInput = distortedUv * 20.0 + uTime * 0.5; // Higher frequency for particles
+float shimmerNoiseValue = snoise(shimmerNoiseInput);  // Apply Perlin noise for randomness
+
+// Step 3: Create particle flicker (shimmer intensity)
+float particleFlicker = fract(shimmerNoiseValue * 50.0);  // Flickering effect for particles
+float shimmerIntensity = 1.0 + particleFlicker * 0.2; // Shimmer intensity
+
+// Step 4: Apply shimmer effect
+vec4 shimmeredDistortedImage = distortedImage * shimmerIntensity;  // Brighten shimmered image
+
+// Step 5: Add a soft blur to create a glow effect
+vec4 blurredShimmeredImage = texture2D(uTexture, distortedUv * 1.02);  // Slightly offset UV for blur effect
+blurredShimmeredImage *= 0.3;  // Decrease intensity of blur
+
+// Step 6: Combine shimmered image with its blurred version for a glow effect
+vec4 glowingShimmer = shimmeredDistortedImage + blurredShimmeredImage;  // Combine shimmer with glow
+
+// Step 7: Final blending (mix with original image and distorted versions)
+vec4 finalColor = mix(originalImage, blurredImage, smoothingDistortion * 1.5);  // Original + blurred effect
+finalColor = mix(finalColor, glowingShimmer, smoothingDistortion);  // Add glow to the final color
+
+// Step 8: Output the final result
+gl_FragColor = finalColor;
 }

@@ -23,20 +23,25 @@ export default class Plane {
     }
 
     window.addEventListener('pointermove', (event) => {
-      this.userMousePosition.clientX = event.clientX / this.sizes.width
-      this.userMousePosition.clientY = 1 - event.clientY / this.sizes.height
+      this.userMousePosition.clientX =
+        (event.clientX / this.sizes.width) * 1.8 - 1 * this.planeAspectRatio
+      this.userMousePosition.clientY =
+        1 - (event.clientY / this.sizes.height) * this.planeAspectRatio * 1.8
     })
   }
 
   loadTexture() {
     this.loader = new THREE.TextureLoader()
-    this.texture = this.loader.load('/textures/horse.jpg')
+    this.texture = this.loader.load('/textures/1.jpg')
     this.texture.wrapS = THREE.RepeatWrapping
     this.texture.wrapT = THREE.RepeatWrapping
   }
 
   createPlane() {
-    const geometry = new THREE.PlaneGeometry(3, 2, 128, 128)
+    const geometry = new THREE.PlaneGeometry(1.8, 2.8, 128, 128)
+    this.planeAspectRatio =
+      geometry.parameters.width / geometry.parameters.height
+
     const material = new THREE.ShaderMaterial({
       vertexShader: planeVertexShader,
       fragmentShader: planeFragmentShader,
@@ -215,7 +220,7 @@ export default class Plane {
   }
 
   update() {
-    this.mesh.material.uniforms.uTime.value = this.time.elapsed * 0.0001
+    this.mesh.material.uniforms.uTime.value = this.time.elapsed * 0.00001
     this.mesh.material.uniforms.uUserMousePositionX.value =
       this.userMousePosition.clientX
     this.mesh.material.uniforms.uUserMousePositionY.value =
