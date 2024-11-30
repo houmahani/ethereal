@@ -24,9 +24,9 @@ export default class Plane {
 
     window.addEventListener('pointermove', (event) => {
       this.userMousePosition.clientX =
-        (event.clientX / this.sizes.width) * 1.8 - 1 * this.planeAspectRatio
+        (event.clientX / this.sizes.width) * 2 - 1 * this.planeAspectRatio
       this.userMousePosition.clientY =
-        1 - (event.clientY / this.sizes.height) * this.planeAspectRatio * 1.8
+        1 - (event.clientY / this.sizes.height) * this.planeAspectRatio * 2
     })
   }
 
@@ -38,7 +38,7 @@ export default class Plane {
   }
 
   createPlane() {
-    const geometry = new THREE.PlaneGeometry(1.8, 2.8, 128, 128)
+    const geometry = new THREE.PlaneGeometry(1.6, 2.5, 128, 128)
     this.planeAspectRatio =
       geometry.parameters.width / geometry.parameters.height
 
