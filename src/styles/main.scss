@@ -2,8 +2,10 @@
 
 // Base styles
 @use './base/reset';
+@use './base/base';
 
 // Layouts
 @use './layout/canvas';
+@use './layout/footer';
 
 // Components

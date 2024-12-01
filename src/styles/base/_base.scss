@@ -1,0 +1,10 @@
+body {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@media (max-width: 768px) {
+  .tp-dfwv {
+    /* Tweakpane default class */
+    display: none;
+  }
+}
