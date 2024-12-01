@@ -28,6 +28,10 @@ footer {
     width: 100%;
     justify-content: space-between;
     align-items: flex-end;
+    @media (max-width: 1024px) {
+      align-items: flex-start;
+      flex-direction: column;
+    }
   }
 
   .contact {
@@ -37,6 +41,9 @@ footer {
 
   .about {
     max-width: 300px;
+    @media (max-width: 1024px) {
+      max-width: none;
+    }
   }
 
   .ressources {
