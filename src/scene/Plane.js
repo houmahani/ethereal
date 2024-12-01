@@ -39,6 +39,7 @@ export default class Plane {
 
   createPlane() {
     const geometry = new THREE.PlaneGeometry(1.6, 2.5, 128, 128)
+
     this.planeAspectRatio =
       geometry.parameters.width / geometry.parameters.height
 
@@ -62,6 +63,9 @@ export default class Plane {
         uMaskChromaticInnerRadius: new THREE.Uniform(0.31),
         uNoiseScaleX: new THREE.Uniform(0.5),
         uNoiseScaleY: new THREE.Uniform(0.1),
+        uIsFullEffect: new THREE.Uniform(false),
+        uGlowIntensity: new THREE.Uniform(0.31),
+        uShimmerNoiseIntensity: new THREE.Uniform(0.4),
       },
     })
 
@@ -70,34 +74,75 @@ export default class Plane {
   }
 
   debug() {
-    this.tweakpane
+    const chromaticFolder = this.tweakpane.addFolder({
+      title: 'chromatic',
+      expanded: false,
+    })
+    const chromaticColorFolder = chromaticFolder.addFolder({
+      title: 'colors',
+      expanded: false,
+    })
+    const chromaticDistortionFolder = chromaticFolder.addFolder({
+      title: 'distortion',
+      expanded: false,
+    })
+    const chromaticGlowFolder = chromaticFolder.addFolder({
+      title: 'shimmer',
+      expanded: false,
+    })
+    const maskFolder = this.tweakpane.addFolder({
+      title: 'shape',
+      expanded: false,
+    })
+    chromaticColorFolder
       .addBlade({
         view: 'slider',
-        label: 'uChromaticIntensity',
+        label: 'intensity',
         min: 0,
         max: 1,
         value: 0.8,
       })
       .on('change', (event) => {
         this.mesh.material.uniforms.uChromaticIntensity.value = event.value
-      })
+      }),
+      chromaticGlowFolder
+        .addBlade({
+          view: 'slider',
+          label: 'glowIntensity',
+          min: 0,
+          max: 1,
+          value: 0.31,
+        })
+        .on('change', (event) => {
+          this.mesh.material.uniforms.uGlowIntensity.value = event.value
+        }),
+      chromaticGlowFolder
+        .addBlade({
+          view: 'slider',
+          label: 'noiseIntensity',
+          min: 0,
+          max: 1,
+          value: 0.4,
+        })
+        .on('change', (event) => {
+          this.mesh.material.uniforms.uShimmerNoiseIntensity.value = event.value
+        }),
+      chromaticColorFolder
+        .addBlade({
+          view: 'slider',
+          label: 'redOffset',
+          min: 0,
+          max: 0.05,
+          value: 0.01,
+        })
+        .on('change', (event) => {
+          this.mesh.material.uniforms.uRedOffset.value = event.value
+        })
 
-    this.tweakpane
+    chromaticColorFolder
       .addBlade({
         view: 'slider',
-        label: 'uRedOffset',
-        min: 0,
-        max: 0.05,
-        value: 0.01,
-      })
-      .on('change', (event) => {
-        this.mesh.material.uniforms.uRedOffset.value = event.value
-      })
-
-    this.tweakpane
-      .addBlade({
-        view: 'slider',
-        label: 'uGreenOffset',
+        label: 'greenOffset',
         min: 0,
         max: 0.05,
         value: 0.03,
@@ -106,10 +151,10 @@ export default class Plane {
         this.mesh.material.uniforms.uGreenOffset.value = event.value
       })
 
-    this.tweakpane
+    chromaticColorFolder
       .addBlade({
         view: 'slider',
-        label: 'uBlueOffset',
+        label: 'blueOffset',
         min: 0,
         max: 0.05,
         value: 0.04,
@@ -118,10 +163,10 @@ export default class Plane {
         this.mesh.material.uniforms.uBlueOffset.value = event.value
       })
 
-    this.tweakpane
+    chromaticDistortionFolder
       .addBlade({
         view: 'slider',
-        label: 'uDistortionAmplitude',
+        label: 'amplitude',
         min: 0,
         max: 0.5,
         value: 0.09,
@@ -130,10 +175,10 @@ export default class Plane {
         this.mesh.material.uniforms.uDistortionAmplitude.value = event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uDistortionFrequency',
+        label: 'frequency',
         min: 1,
         max: 10,
         value: 6.0,
@@ -142,10 +187,10 @@ export default class Plane {
         this.mesh.material.uniforms.uDistortionFrequency.value = event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uMaskDistortionInnerRadius',
+        label: 'innerRadius',
         min: 0,
         max: 1.0,
         value: 0.21,
@@ -155,10 +200,10 @@ export default class Plane {
           event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uMaskDistortionOuterRadius',
+        label: 'outerRadius',
         min: 0,
         max: 1.0,
         value: 0.3,
@@ -168,10 +213,10 @@ export default class Plane {
           event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uMaskChromaticInnerRadius',
+        label: 'innerRadius',
         min: 0,
         max: 1.0,
         value: 0.31,
@@ -181,10 +226,10 @@ export default class Plane {
           event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uMaskChromaticOuterRadius',
+        label: 'outerRadius',
         min: 0,
         max: 1.0,
         value: 0.4,
@@ -194,10 +239,10 @@ export default class Plane {
           event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uNoiseScaleX',
+        label: 'noiseScaleX',
         min: 0.0,
         max: 2.0,
         step: 0.01,
@@ -206,16 +251,37 @@ export default class Plane {
         this.mesh.material.uniforms.uNoiseScaleX.value = event.value
       })
 
-    this.tweakpane
+    maskFolder
       .addBlade({
         view: 'slider',
-        label: 'uNoiseScaleY',
+        label: 'noiseScaleY',
         min: 0.0,
         max: 2.0,
         step: 0.01,
       })
       .on('change', (event) => {
         this.mesh.material.uniforms.uNoiseScaleY.value = event.value
+      })
+
+    this.tweakpane
+      .addBinding({ fullEffect: false }, 'fullEffect', {
+        view: 'checkbox',
+        label: 'fullEffect',
+      })
+      .on('change', (event) => {
+        this.mesh.material.uniforms.uIsFullEffect.value = event.value
+      })
+
+    this.tweakpane.addBlade({
+      view: 'separator',
+    })
+
+    this.tweakpane
+      .addButton({
+        title: 'Reset',
+      })
+      .on('click', () => {
+        window.location.reload()
       })
   }
 

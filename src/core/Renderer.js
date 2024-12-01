@@ -11,8 +11,11 @@ export default class Renderer extends Singleton {
     this.scene = experience.scene
     this.camera = experience.camera.instance
 
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
-    this.renderer.setClearColor(0xc0d4dc)
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      alpha: true,
+    })
+    // this.renderer.setClearColor(0xc0d4dc)
     this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   }
