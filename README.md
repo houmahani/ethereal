@@ -1,22 +1,36 @@
-# **Ethereal Chromatic Mouse Effect**
+# Ethereal Effect
 
-Exploring shaders with a chromatic ethereal effect. I achieved chromatic distortion by offsetting RGB channels, added a mask to toggle before/after effects, and used noise for a mesmerizing shimmer✨ Also, it reacts dynamically to user interactions.
-
-## **Demo**
+A chromatic mouse effect built with Three.js shaders.
+RGB channels shift apart as your cursor moves, creating a glitchy, liquid distortion.
 
 [Live Demo](https://ethereal-effect.vercel.app/)
 
-## **Features**
+![Ethereal](public/screenshot.png)
 
-- **Chromatic Distortion**: Achieved by offsetting RGB channels for a glitchy effect
-- **Dynamic Masking**: Toggle between before/after effects with a smooth gradient transition
-- **Shimmering Noise**: Adds an ethereal, liquid vibe to the effect
-- **User Interaction**: Reacts dynamically to mouse movement for an interactive experience
-- **Customizable Parameters**: Tweak settings like distortion intensity, mask radius, and shimmer effects via Tweakpane
+## About
 
-## **Ressources**
+An exploration of fragment shaders — chromatic distortion by offsetting RGB channels,
+a mask to toggle before/after effects, and shimmering noise that reacts to mouse movement.
 
-- **[Photo by Benjamin Raffetseder](https://unsplash.com/fr/photos/arbre-nu-brun-Xb4i2JDSjdQ)**
-- **[The Book of Shaders](https://thebookofshaders.com/)**
-- **[three.js](https://threejs.org/)**
-- **[three.js journey](https://threejs-journey.com/)**
+## Built with
+
+- [Vite](https://vite.dev/)
+- [JavaScript](https://developer.mozilla.org/fr/docs/Web/JavaScript)
+
+## Resources
+
+- [Photo by Benjamin Raffetseder](https://unsplash.com/fr/photos/arbre-nu-brun-Xb4i2JDSjdQ)
+- [The Book of Shaders](https://thebookofshaders.com/)
+
+## Run locally
+
+```bash
+git clone https://github.com/houmahani/ethereal
+cd repo-name
+npm install
+npm run dev
+```
+
+## License
+
+MIT
